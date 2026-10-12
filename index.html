@@ -70,7 +70,7 @@
     .counter-btn:hover { background: #e2e8f0; }
     .counter-input { width: 55px; text-align: center; font-size: 14px; font-weight: 800; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; outline: none; }
 
-    /* Плашка предупреждения о доплате */
+    /* Плашка предупреждения о доплате для менеджера */
     .alert-pill { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 6px 10px; border-radius: 4px; font-size: 11.5px; font-weight: 700; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
 
     /* Тумблер электричества */
@@ -145,10 +145,10 @@
 
     <!-- Данные заявки / клиента -->
     <div class="client-grid">
-      <div class="input-box"><input type="text" id="order_date" placeholder="Дата монтажа (напр. 16.10)" oninput="updateCalculation()"></div>
+      <div class="input-box"><input type="text" id="order_date" placeholder="Дата монтажа (напр. 06.10)" oninput="updateCalculation()"></div>
       <div class="input-box"><input type="text" id="manager_name" placeholder="Ответственный менеджер" oninput="saveManagerName(); updateCalculation();"></div>
       <div class="input-box"><input type="text" id="client_phone" placeholder="Номер клиента для связи" oninput="updateCalculation()"></div>
-      <div class="input-box"><input type="text" id="object_name" placeholder="Объект (напр. Под бытовку 4х2,3)" oninput="updateCalculation()"></div>
+      <div class="input-box"><input type="text" id="object_name" placeholder="Объект (напр. 4х2,3)" oninput="updateCalculation()"></div>
       <div class="input-box" style="grid-column: span 2;"><input type="text" id="client_addr" placeholder="Адрес / Координаты участка" oninput="updateCalculation()"></div>
     </div>
 
@@ -161,13 +161,13 @@
       <div class="section-body">
         <div class="presets-title">Подбор под постройку / Режим:</div>
         <div class="preset-grid">
-          <button class="preset-btn" id="btn_pr_2" onclick="applyPreset('Бытовка 2м', 4, '2m', this)">2м (4 шт.)</button>
-          <button class="preset-btn" id="btn_pr_3" onclick="applyPreset('Бытовка 3м', 4, '3m', this)">3м (4 шт.)</button>
-          <button class="preset-btn active" id="btn_pr_4" onclick="applyPreset('Бытовка 4х2,3', 4, '4m', this)">4м (4 шт.)</button>
-          <button class="preset-btn" id="btn_pr_5" onclick="applyPreset('Бытовка 5м', 6, '5m', this)">5м (6 шт.)</button>
-          <button class="preset-btn" id="btn_pr_6" onclick="applyPreset('Бытовка 6м', 6, '6m', this)">6м (6 шт.)</button>
-          <button class="preset-btn" id="btn_pr_7" onclick="applyPreset('Бытовка 7м', 8, '7m', this)">7м (8 шт.)</button>
-          <button class="preset-btn" id="btn_pr_mod" onclick="applyPreset('Модуль 6х4', 9, 'mod64', this)">Модуль 6х4 (9 шт.)</button>
+          <button class="preset-btn" id="btn_pr_2" onclick="applyPreset('2х2,3', 4, '2m', this)">2м (4 шт.)</button>
+          <button class="preset-btn" id="btn_pr_3" onclick="applyPreset('3х2,3', 4, '3m', this)">3м (4 шт.)</button>
+          <button class="preset-btn active" id="btn_pr_4" onclick="applyPreset('4х2,3', 4, '4m', this)">4м (4 шт.)</button>
+          <button class="preset-btn" id="btn_pr_5" onclick="applyPreset('5х2,3', 6, '5m', this)">5м (6 шт.)</button>
+          <button class="preset-btn" id="btn_pr_6" onclick="applyPreset('6х2,3', 6, '6m', this)">6м (6 шт.)</button>
+          <button class="preset-btn" id="btn_pr_7" onclick="applyPreset('7х2,3', 8, '7m', this)">7м (8 шт.)</button>
+          <button class="preset-btn" id="btn_pr_mod" onclick="applyPreset('6х4', 9, 'mod64', this)">Модуль 6х4 (9 шт.)</button>
           <button class="preset-btn" id="btn_pr_manual" onclick="enableManualMode(this)">✏️ Вручную</button>
         </div>
 
@@ -184,7 +184,7 @@
 
         <div id="under_four_alert" class="alert-pill">
           <span>⚠️</span>
-          <span>При заказе 4 свай и менее действует доплата: +4 000 руб.</span>
+          <span>Внимание для менеджера: включена наценка за минимальный заказ свай (&le; 4 шт.)</span>
         </div>
       </div>
     </div>
@@ -322,7 +322,7 @@
       <tbody id="kp_table_body"></tbody>
     </table>
 
-    <!-- СХЕМА СВАЙНОГО ПОЛЯ СНИЗУ СПРАВА -->
+    <!-- Схема свайного поля снизу справа -->
     <div class="kp-scheme-box">
       <div class="kp-scheme-title" id="scheme_header_title">Схема фундамента / свайного поля</div>
       <div class="kp-scheme-render" id="scheme_canvas"></div>
@@ -393,7 +393,7 @@ function init() {
   const dayStr = String(d.getDate()).padStart(2, '0');
   const monthStr = String(d.getMonth() + 1).padStart(2, '0');
   document.getElementById('order_date').value = `${dayStr}.${monthStr}`;
-  document.getElementById('object_name').value = 'Под бытовку 4х2,3';
+  document.getElementById('object_name').value = '4х2,3';
 
   renderPileRadios();
   onDeliveryKmChange();
@@ -436,7 +436,7 @@ function setPileType(id) {
 function applyPreset(name, count, key, btnEl) {
   state.isManualMode = false;
   state.activePresetKey = key;
-  document.getElementById('object_name').value = `Под ${name.toLowerCase()}`;
+  document.getElementById('object_name').value = name;
   document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
   if (btnEl) btnEl.classList.add('active');
   state.pileQty = count;
@@ -449,11 +449,6 @@ function enableManualMode(btnEl) {
   state.activePresetKey = 'custom';
   document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
   if (btnEl) btnEl.classList.add('active');
-  // При переходе в ручной режим очищаем авто-привязку названия, если там стоял дефолтный пресет
-  let objInput = document.getElementById('object_name');
-  if (objInput.value.includes('Бытовка') || objInput.value.includes('Модуль')) {
-    objInput.value = 'Под постройку';
-  }
   updateCalculation();
 }
 
@@ -471,7 +466,6 @@ function onPileQtyInput(val) {
 }
 
 function switchToCustomIfMismatched() {
-  // Если количество изменилось руками и не совпадает с активным пресетом — мягко переключаем на «Вручную»
   const presetCounts = { '2m': 4, '3m': 4, '4m': 4, '5m': 6, '6m': 6, '7m': 8, 'mod64': 9 };
   if (!state.isManualMode && presetCounts[state.activePresetKey] !== state.pileQty) {
     state.isManualMode = true;
@@ -533,37 +527,31 @@ function onCustomDeliveryPrice() {
   updateCalculation();
 }
 
-/* ОТРИСОВКА ИНЖЕНЕРНЫХ ЧЕРТЕЖЕЙ / СХЕМ СВАЙ */
+/* ОТРИСОВКА СХЕМ СВАЙНОГО ПОЛЯ */
 function renderSchemeSvg() {
   const canvas = document.getElementById('scheme_canvas');
   const header = document.getElementById('scheme_header_title');
   const qty = state.pileQty;
   const key = state.activePresetKey;
 
-  // Отрисовка по типу размера (как на исходных фото)
   if (key === '2m' || (key === 'custom' && qty === 4 && document.getElementById('object_name').value.includes('2'))) {
-    header.textContent = 'Схема: Бытовка 2м (4 сваи / опоры)';
+    header.textContent = 'Схема: Бытовка 2м (4 сваи)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
-        <!-- Брусья/лыжи -->
         <rect x="75" y="38" width="300" height="14" fill="#f59e0b" rx="2"/>
         <rect x="75" y="108" width="300" height="14" fill="#f59e0b" rx="2"/>
-        <!-- 4 Сваи/блоки -->
         <rect x="135" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="287" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="135" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="287" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <!-- Размеры между сваями 1.5м -->
         <line x1="149" y1="20" x2="301" y2="20" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="149" y1="14" x2="149" y2="26" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="301" y1="14" x2="301" y2="26" stroke="#0f172a" stroke-width="1.2"/>
         <text x="225" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">1,5 м</text>
-        <!-- Ширина 1.5м -->
         <line x1="48" y1="45" x2="48" y2="115" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="42" y1="45" x2="54" y2="45" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="42" y1="115" x2="54" y2="115" stroke="#0f172a" stroke-width="1.2"/>
         <text x="35" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 35 84)">1,5 м</text>
-        <!-- Общая длина 2.0м -->
         <line x1="75" y1="144" x2="375" y2="144" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="75" y1="138" x2="75" y2="150" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="375" y1="138" x2="375" y2="150" stroke="#0f172a" stroke-width="1.2"/>
@@ -571,7 +559,7 @@ function renderSchemeSvg() {
       </svg>
     `;
   } else if (key === '3m') {
-    header.textContent = 'Схема: Бытовка 3м (4 сваи / опоры)';
+    header.textContent = 'Схема: Бытовка 3м (4 сваи)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
         <rect x="65" y="38" width="320" height="14" fill="#f59e0b" rx="2"/>
@@ -595,7 +583,7 @@ function renderSchemeSvg() {
       </svg>
     `;
   } else if (key === '4m' || (key === 'custom' && qty === 4)) {
-    header.textContent = 'Схема: Бытовка 4м (4 сваи / опоры)';
+    header.textContent = 'Схема: Бытовка 4м (4 сваи)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
         <rect x="55" y="38" width="340" height="14" fill="#f59e0b" rx="2"/>
@@ -619,7 +607,7 @@ function renderSchemeSvg() {
       </svg>
     `;
   } else if (key === '5m' || (key === 'custom' && qty === 6 && document.getElementById('object_name').value.includes('5'))) {
-    header.textContent = 'Схема: Бытовка 5м (6 свай / опор)';
+    header.textContent = 'Схема: Бытовка 5м (6 свай)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
         <rect x="45" y="38" width="360" height="14" fill="#f59e0b" rx="2"/>
@@ -630,7 +618,6 @@ function renderSchemeSvg() {
         <rect x="65" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="211" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="357" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <!-- Размеры 2.3м и 2.3м -->
         <line x1="79" y1="20" x2="225" y2="20" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="225" y1="20" x2="371" y2="20" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="79" y1="14" x2="79" y2="26" stroke="#0f172a" stroke-width="1.2"/>
@@ -638,12 +625,10 @@ function renderSchemeSvg() {
         <line x1="371" y1="14" x2="371" y2="26" stroke="#0f172a" stroke-width="1.2"/>
         <text x="152" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,3 м</text>
         <text x="298" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,3 м</text>
-        <!-- Ширина 1.5м -->
         <line x1="30" y1="45" x2="30" y2="115" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="24" y1="45" x2="36" y2="45" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="24" y1="115" x2="36" y2="115" stroke="#0f172a" stroke-width="1.2"/>
         <text x="20" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 20 84)">1,5 м</text>
-        <!-- Длина 5.0м -->
         <line x1="45" y1="144" x2="405" y2="144" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="45" y1="138" x2="45" y2="150" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="405" y1="138" x2="405" y2="150" stroke="#0f172a" stroke-width="1.2"/>
@@ -651,7 +636,7 @@ function renderSchemeSvg() {
       </svg>
     `;
   } else if (key === '6m' || (key === 'custom' && qty === 6)) {
-    header.textContent = 'Схема: Бытовка 6м (6 свай / опор)';
+    header.textContent = 'Схема: Бытовка 6м (6 свай)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
         <rect x="40" y="38" width="370" height="14" fill="#f59e0b" rx="2"/>
@@ -662,7 +647,6 @@ function renderSchemeSvg() {
         <rect x="58" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="211" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="364" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <!-- Размеры 2.7м и 2.7м -->
         <line x1="72" y1="20" x2="225" y2="20" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="225" y1="20" x2="378" y2="20" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="72" y1="14" x2="72" y2="26" stroke="#0f172a" stroke-width="1.2"/>
@@ -670,12 +654,10 @@ function renderSchemeSvg() {
         <line x1="378" y1="14" x2="378" y2="26" stroke="#0f172a" stroke-width="1.2"/>
         <text x="148" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,7 м</text>
         <text x="302" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,7 м</text>
-        <!-- Ширина 1.5м -->
         <line x1="26" y1="45" x2="26" y2="115" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="20" y1="45" x2="32" y2="45" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="20" y1="115" x2="32" y2="115" stroke="#0f172a" stroke-width="1.2"/>
         <text x="16" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 16 84)">1,5 м</text>
-        <!-- Длина 6.0м -->
         <line x1="40" y1="144" x2="410" y2="144" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="40" y1="138" x2="40" y2="150" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="410" y1="138" x2="410" y2="150" stroke="#0f172a" stroke-width="1.2"/>
@@ -683,7 +665,7 @@ function renderSchemeSvg() {
       </svg>
     `;
   } else if (key === '7m' || (key === 'custom' && qty === 8)) {
-    header.textContent = 'Схема: Бытовка 7м (8 свай / опор)';
+    header.textContent = 'Схема: Бытовка 7м (8 свай)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
         <rect x="35" y="38" width="380" height="14" fill="#f59e0b" rx="2"/>
@@ -706,11 +688,9 @@ function renderSchemeSvg() {
     header.textContent = 'Схема: Модуль 6х4 м (9 свай)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
-        <!-- 3 бруса -->
         <rect x="65" y="25" width="320" height="12" fill="#f59e0b" rx="2"/>
         <rect x="65" y="74" width="320" height="12" fill="#f59e0b" rx="2"/>
         <rect x="65" y="123" width="320" height="12" fill="#f59e0b" rx="2"/>
-        <!-- 9 свай 3х3 -->
         <rect x="85" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="213" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
         <rect x="341" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
@@ -744,9 +724,12 @@ function updateCalculation() {
   // Доплата за 4 сваи и менее (+4 000 руб.)
   const isSmallOrder = qty <= 4;
   const smallOrderSurcharge = isSmallOrder ? 4000 : 0;
+  
+  // Плашка для менеджера слева видна
   document.getElementById('under_four_alert').style.display = isSmallOrder ? 'flex' : 'none';
 
-  const pileFullCost = pileBaseTotal + smallOrderSurcharge;
+  // В смете доплата за малый объем бесшовно включена в саму позицию свай
+  const pileCostCombined = pileBaseTotal + smallOrderSurcharge;
 
   // Генератор
   const genCost = state.generatorNeeded ? 3000 : 0;
@@ -760,33 +743,22 @@ function updateCalculation() {
   const delivCost = isDeliv ? state.deliveryPrice : 0;
 
   // ИТОГО
-  const totalSum = pileFullCost + genCost + carryCost + delivCost;
+  const totalSum = pileCostCombined + genCost + carryCost + delivCost;
 
-  // Обновление таблицы справа
+  // Обновление таблицы справа (для клиента)
   const tbody = document.getElementById('kp_table_body');
   tbody.innerHTML = '';
 
-  // 1. Сваи с установкой
+  // 1. Сваи с установкой (без отдельной строки доплаты!)
   let trPile = document.createElement('tr');
   trPile.innerHTML = `
     <td><strong>${pile.name} с установкой</strong></td>
     <td style="text-align:center; font-weight:700;">${qty} шт.</td>
-    <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${pileBaseTotal.toLocaleString('ru-RU')} руб.</td>
+    <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${pileCostCombined.toLocaleString('ru-RU')} руб.</td>
   `;
   tbody.appendChild(trPile);
 
-  // 2. Доплата за малый объем
-  if (isSmallOrder) {
-    let trSmall = document.createElement('tr');
-    trSmall.innerHTML = `
-      <td style="color:#b91c1c; font-weight:600;">Доплата за малый объем (4 сваи и менее)</td>
-      <td style="text-align:center; font-weight:700;">1</td>
-      <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">4 000 руб.</td>
-    `;
-    tbody.appendChild(trSmall);
-  }
-
-  // 3. Доставка оборудования
+  // 2. Доставка оборудования
   if (isDeliv) {
     let trDel = document.createElement('tr');
     trDel.innerHTML = `
@@ -797,7 +769,7 @@ function updateCalculation() {
     tbody.appendChild(trDel);
   }
 
-  // 4. Генератор (просто Генератор)
+  // 3. Генератор
   if (state.generatorNeeded) {
     let trGen = document.createElement('tr');
     trGen.innerHTML = `
@@ -808,7 +780,7 @@ function updateCalculation() {
     tbody.appendChild(trGen);
   }
 
-  // 5. Пронос
+  // 4. Пронос
   if (carryCost > 0) {
     let trCar = document.createElement('tr');
     trCar.innerHTML = `
@@ -832,14 +804,17 @@ function updateCalculation() {
   // Текстовые поля КП
   document.getElementById('kp_out_date').textContent = document.getElementById('order_date').value || '—';
   document.getElementById('kp_out_manager').textContent = document.getElementById('manager_name').value || '—';
-  document.getElementById('kp_out_object').textContent = document.getElementById('object_name').value || '—';
+  
+  let rawObj = document.getElementById('object_name').value.trim() || '4х2,3';
+  let formattedObj = rawObj.toLowerCase().startsWith('под ') ? rawObj : `Под бытовку ${rawObj}`;
+  document.getElementById('kp_out_object').textContent = formattedObj;
+  
   document.getElementById('kp_out_addr').textContent = document.getElementById('client_addr').value || '—';
   document.getElementById('kp_out_phone').textContent = document.getElementById('client_phone').value || '—';
 
   document.getElementById('left_total').textContent = totalSum.toLocaleString('ru-RU');
   document.getElementById('kp_total_sum').textContent = `${totalSum.toLocaleString('ru-RU')} руб.`;
 
-  // Рендерим актуальную схему свай
   renderSchemeSvg();
 }
 
@@ -849,7 +824,7 @@ function toggleHidePrices() {
 
 function resetCalculator(ask) {
   if (ask && !confirm('Очистить все параметры расчета?')) return;
-  document.getElementById('object_name').value = 'Под бытовку 4х2,3';
+  document.getElementById('object_name').value = '4х2,3';
   document.getElementById('client_addr').value = '';
   document.getElementById('client_phone').value = '';
   document.getElementById('delivery_km').value = '0';
@@ -872,7 +847,7 @@ function resetCalculator(ask) {
   updateCalculation();
 }
 
-/* ГЕНЕРАЦИЯ ЗАЯВКИ ПО ОБРАЗЦУ КЛИЕНТА */
+/* ГЕНЕРАЦИЯ ЗАЯВКИ СТРОГО ПО ФИКСИРОВАННОМУ ПОРЯДКУ */
 function openOrderModal() {
   const pile = PILES_DATA.find(p => p.id === state.selectedPileId) || PILES_DATA[2];
   const qty = state.pileQty;
@@ -880,7 +855,10 @@ function openOrderModal() {
   const pileCostWithInstall = (pile.price * qty) + (isSmall ? 4000 : 0);
 
   const dateVal = document.getElementById('order_date').value || '—';
-  const objectVal = document.getElementById('object_name').value || 'Под бытовку';
+  
+  let rawObj = document.getElementById('object_name').value.trim() || '4х2,3';
+  let objectVal = rawObj.toLowerCase().startsWith('под ') ? rawObj : `Под бытовку ${rawObj}`;
+
   const addrVal = document.getElementById('client_addr').value || 'Уточняется';
   const phoneVal = document.getElementById('client_phone').value || '—';
   const managerVal = document.getElementById('manager_name').value || '—';
@@ -904,12 +882,24 @@ function openOrderModal() {
     carryText = `\n${state.carryName}: ${carryCost.toLocaleString('ru-RU')} руб.`;
   }
 
+  // Фиксированная структура заявки строго по пунктам ТЗ:
+  // 1. заявка на установку / дата
+  // 2. размер бытовки
+  // 3. комплект свай
+  // 4. доставка бура и оборудования
+  // 5. электричество (+ пустая строка)
+  // 6. итого (+ пустая строка)
+  // 7. контакты / номер телефона
+  // 8. итого мастеру оплата наличными
+  // 9. ответственный менеджер
+
   let text = `Заявка на установку свай: ${dateVal}\n`;
   text += `${objectVal}\n\n`;
   text += `${pile.name} - ${qty} шт с доставкой и установкой ${pileCostWithInstall.toLocaleString('ru-RU')} руб.\n\n`;
   text += `Доставка бура и оборудования: ${addrVal}\n`;
   text += `${delivCost.toLocaleString('ru-RU')} руб.\n`;
-  text += `${electricText}${carryText}\n`;
+  text += `${electricText}${carryText}\n\n`;
+  text += `Итого: ${total.toLocaleString('ru-RU')} руб.\n\n`;
   text += `Контакты\n`;
   text += `Номер клиента для связи: ${phoneVal}\n`;
   text += `Всего: ${total.toLocaleString('ru-RU')} руб. оплата мастеру наличными\n`;
