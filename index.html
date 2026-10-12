@@ -51,9 +51,9 @@
     /* Пресеты объектов */
     .presets-title { font-weight: 700; font-size: 11.5px; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
     .preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-    .preset-btn { background: #f1f5f9; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 4px; text-align: center; cursor: pointer; font-size: 11px; font-weight: 600; color: #334155; transition: all 0.15s; }
+    .preset-btn { background: #f1f5f9; border: 1px solid var(--border-color); border-radius: 4px; padding: 7px 4px; text-align: center; cursor: pointer; font-size: 11px; font-weight: 600; color: #334155; transition: all 0.15s; }
     .preset-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
-    .preset-btn.active { background: #eff6ff; border-color: #2563eb; color: #1e3a8a; font-weight: 700; box-shadow: 0 0 0 1px #2563eb; }
+    .preset-btn.active { background: #eff6ff; border-color: #2563eb; color: #1e3a8a; font-weight: 700; box-shadow: 0 0 0 1.5px #2563eb; }
 
     /* Опции / Сваи */
     .option-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 5px; }
@@ -61,7 +61,6 @@
     .option-left { display: flex; align-items: center; gap: 8px; flex: 1; }
     .option-left input[type="radio"], .option-left input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: var(--primary); }
     .option-left label { font-size: 12.5px; font-weight: 600; cursor: pointer; user-select: none; }
-    .option-right { display: flex; align-items: center; gap: 6px; }
     .price-badge { font-weight: 700; color: #0f172a; font-size: 12.5px; width: 85px; text-align: right; }
 
     /* Селектор количества */
@@ -90,10 +89,10 @@
 
     /* Правая панель (КП / Смета) */
     .kp-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 14px; }
-    .kp-logo-area { display: flex; align-items: center; gap: 10px; }
-    .kp-logo-img { max-height: 52px; max-width: 140px; object-fit: contain; }
-    .kp-logo-fallback { width: 42px; height: 42px; border-radius: 50%; border: 3px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #16a34a; }
-    .kp-logo-text { font-size: 19px; font-weight: 900; color: #0f172a; }
+    .kp-logo-area { display: flex; align-items: center; gap: 12px; }
+    .kp-logo-img { height: 48px; max-width: 150px; object-fit: contain; }
+    .kp-logo-fallback { width: 44px; height: 44px; border-radius: 6px; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #16a34a; }
+    .kp-logo-text { font-size: 19px; font-weight: 900; color: #0f172a; line-height: 1.2; }
     .kp-contacts { text-align: right; font-size: 11.5px; color: #334155; line-height: 1.35; }
     .kp-contacts strong { color: #0f172a; }
 
@@ -104,12 +103,18 @@
     .kp-table th { background: #f8fafc; padding: 8px 10px; font-weight: 700; text-align: left; border-bottom: 2px solid #cbd5e1; font-size: 12.5px; color: #334155; }
     .kp-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; font-size: 12.5px; vertical-align: middle; }
 
+    /* Схема свайного поля */
+    .kp-scheme-box { margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; background: #fff; text-align: center; }
+    .kp-scheme-title { font-size: 12px; font-weight: 800; color: #334155; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .kp-scheme-render { width: 100%; max-height: 165px; display: flex; justify-content: center; align-items: center; }
+    .kp-scheme-render svg { width: 100%; max-width: 460px; height: 160px; }
+
     .kp-total-banner { background: #1e3a8a; color: #fff; padding: 12px 18px; border-radius: 6px; font-size: 19px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .kp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     .tech-payment-info { background: #f8fafc; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 10px; color: #1e293b; font-size: 12px; line-height: 1.5; }
 
-    /* Модальное окно генерации заявки */
+    /* Модальное окно заявки */
     .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
     .modal-overlay.active { display: flex; }
     .modal-window { background: #fff; width: 100%; max-width: 780px; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 92vh; }
@@ -154,15 +159,16 @@
         <span class="arrow">▼</span>
       </div>
       <div class="section-body">
-        <div class="presets-title">Быстрый подбор под размер постройки:</div>
+        <div class="presets-title">Подбор под постройку / Режим:</div>
         <div class="preset-grid">
-          <button class="preset-btn" onclick="applyPreset('Бытовка 2м', 4)">2м (4 шт.)</button>
-          <button class="preset-btn" onclick="applyPreset('Бытовка 3м', 4)">3м (4 шт.)</button>
-          <button class="preset-btn active" id="btn_preset_4" onclick="applyPreset('Бытовка 4х2,3', 4)">4м (4 шт.)</button>
-          <button class="preset-btn" onclick="applyPreset('Бытовка 5м', 6)">5м (6 шт.)</button>
-          <button class="preset-btn" onclick="applyPreset('Бытовка 6м', 6)">6м (6 шт.)</button>
-          <button class="preset-btn" onclick="applyPreset('Бытовка 7м', 8)">7м (8 шт.)</button>
-          <button class="preset-btn" style="grid-column: span 2;" onclick="applyPreset('Модуль 6х4', 9)">Модуль 6х4 (9 шт.)</button>
+          <button class="preset-btn" id="btn_pr_2" onclick="applyPreset('Бытовка 2м', 4, '2m', this)">2м (4 шт.)</button>
+          <button class="preset-btn" id="btn_pr_3" onclick="applyPreset('Бытовка 3м', 4, '3m', this)">3м (4 шт.)</button>
+          <button class="preset-btn active" id="btn_pr_4" onclick="applyPreset('Бытовка 4х2,3', 4, '4m', this)">4м (4 шт.)</button>
+          <button class="preset-btn" id="btn_pr_5" onclick="applyPreset('Бытовка 5м', 6, '5m', this)">5м (6 шт.)</button>
+          <button class="preset-btn" id="btn_pr_6" onclick="applyPreset('Бытовка 6м', 6, '6m', this)">6м (6 шт.)</button>
+          <button class="preset-btn" id="btn_pr_7" onclick="applyPreset('Бытовка 7м', 8, '7m', this)">7м (8 шт.)</button>
+          <button class="preset-btn" id="btn_pr_mod" onclick="applyPreset('Модуль 6х4', 9, 'mod64', this)">Модуль 6х4 (9 шт.)</button>
+          <button class="preset-btn" id="btn_pr_manual" onclick="enableManualMode(this)">✏️ Вручную</button>
         </div>
 
         <div id="piles_radios"></div>
@@ -201,7 +207,7 @@
         <div class="option-row">
           <div class="option-left">
             <input type="checkbox" id="chk_generator" onchange="onGeneratorManualChange(this.checked)">
-            <label for="chk_generator">Генератор монтажной бригады</label>
+            <label for="chk_generator">Генератор</label>
           </div>
           <div class="price-badge hideable-price">+3 000 руб.</div>
         </div>
@@ -308,13 +314,19 @@
     <table class="kp-table">
       <thead>
         <tr>
-          <th>Наименование услуги / материала</th>
+          <th>Наименование позиции</th>
           <th style="width:70px; text-align:center;">Кол-во</th>
           <th class="hideable-price" style="width:115px; text-align:right;">Сумма</th>
         </tr>
       </thead>
       <tbody id="kp_table_body"></tbody>
     </table>
+
+    <!-- СХЕМА СВАЙНОГО ПОЛЯ СНИЗУ СПРАВА -->
+    <div class="kp-scheme-box">
+      <div class="kp-scheme-title" id="scheme_header_title">Схема фундамента / свайного поля</div>
+      <div class="kp-scheme-render" id="scheme_canvas"></div>
+    </div>
 
     <!-- Итого к оплате -->
     <div class="kp-total-banner">
@@ -360,6 +372,8 @@ const PILES_DATA = [
 let state = {
   selectedPileId: 'p_76_20',
   pileQty: 4,
+  isManualMode: false,
+  activePresetKey: '4m',
   hasPower: true,
   generatorNeeded: false,
   carryPrice: 0,
@@ -370,13 +384,11 @@ let state = {
 };
 
 function init() {
-  // Загружаем сохраненное имя менеджера
   const savedMgr = localStorage.getItem('svai_calc_manager');
   if (savedMgr) {
     document.getElementById('manager_name').value = savedMgr;
   }
   
-  // Дата по умолчанию (сегодня в формате ДД.ММ)
   const d = new Date();
   const dayStr = String(d.getDate()).padStart(2, '0');
   const monthStr = String(d.getMonth() + 1).padStart(2, '0');
@@ -420,27 +432,56 @@ function setPileType(id) {
   updateCalculation();
 }
 
-function applyPreset(name, count) {
+/* ПРЕСЕТЫ И РУЧНОЙ ВВОД */
+function applyPreset(name, count, key, btnEl) {
+  state.isManualMode = false;
+  state.activePresetKey = key;
   document.getElementById('object_name').value = `Под ${name.toLowerCase()}`;
-  document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
   state.pileQty = count;
   document.getElementById('piles_count').value = count;
+  updateCalculation();
+}
+
+function enableManualMode(btnEl) {
+  state.isManualMode = true;
+  state.activePresetKey = 'custom';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  // При переходе в ручной режим очищаем авто-привязку названия, если там стоял дефолтный пресет
+  let objInput = document.getElementById('object_name');
+  if (objInput.value.includes('Бытовка') || objInput.value.includes('Модуль')) {
+    objInput.value = 'Под постройку';
+  }
   updateCalculation();
 }
 
 function changePileQty(delta) {
   state.pileQty = Math.max(1, state.pileQty + delta);
   document.getElementById('piles_count').value = state.pileQty;
+  switchToCustomIfMismatched();
   updateCalculation();
 }
 
 function onPileQtyInput(val) {
   state.pileQty = Math.max(1, parseInt(val) || 1);
+  switchToCustomIfMismatched();
   updateCalculation();
 }
 
-/* ЛОГИКА ЭЛЕКТРИЧЕСТВА И ГЕНЕРАТОРА */
+function switchToCustomIfMismatched() {
+  // Если количество изменилось руками и не совпадает с активным пресетом — мягко переключаем на «Вручную»
+  const presetCounts = { '2m': 4, '3m': 4, '4m': 4, '5m': 6, '6m': 6, '7m': 8, 'mod64': 9 };
+  if (!state.isManualMode && presetCounts[state.activePresetKey] !== state.pileQty) {
+    state.isManualMode = true;
+    state.activePresetKey = 'custom';
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn_pr_manual').classList.add('active');
+  }
+}
+
+/* ЭЛЕКТРИЧЕСТВО И ГЕНЕРАТОР */
 function setPowerSite(hasPower) {
   state.hasPower = hasPower;
   const btnYes = document.getElementById('btn_power_yes');
@@ -450,13 +491,11 @@ function setPowerSite(hasPower) {
   if (hasPower) {
     btnYes.classList.add('active');
     btnNo.classList.remove('active');
-    // Автоматически снимаем генератор, если свет есть
     state.generatorNeeded = false;
     chkGen.checked = false;
   } else {
     btnNo.classList.add('active');
     btnYes.classList.remove('active');
-    // Автоматически включаем генератор, если света нет
     state.generatorNeeded = true;
     chkGen.checked = true;
   }
@@ -480,7 +519,6 @@ function setCarryDistance(price) {
 function onDeliveryKmChange() {
   const km = parseInt(document.getElementById('delivery_km').value) || 0;
   state.deliveryKm = km;
-  // До 100 км — 5000 ₽, далее 50 ₽ за каждый км
   let price = 5000;
   if (km > 100) {
     price = km * 50;
@@ -493,6 +531,208 @@ function onDeliveryKmChange() {
 function onCustomDeliveryPrice() {
   state.deliveryPrice = parseInt(document.getElementById('delivery_price').value) || 0;
   updateCalculation();
+}
+
+/* ОТРИСОВКА ИНЖЕНЕРНЫХ ЧЕРТЕЖЕЙ / СХЕМ СВАЙ */
+function renderSchemeSvg() {
+  const canvas = document.getElementById('scheme_canvas');
+  const header = document.getElementById('scheme_header_title');
+  const qty = state.pileQty;
+  const key = state.activePresetKey;
+
+  // Отрисовка по типу размера (как на исходных фото)
+  if (key === '2m' || (key === 'custom' && qty === 4 && document.getElementById('object_name').value.includes('2'))) {
+    header.textContent = 'Схема: Бытовка 2м (4 сваи / опоры)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <!-- Брусья/лыжи -->
+        <rect x="75" y="38" width="300" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="75" y="108" width="300" height="14" fill="#f59e0b" rx="2"/>
+        <!-- 4 Сваи/блоки -->
+        <rect x="135" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="287" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="135" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="287" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- Размеры между сваями 1.5м -->
+        <line x1="149" y1="20" x2="301" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="149" y1="14" x2="149" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="301" y1="14" x2="301" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">1,5 м</text>
+        <!-- Ширина 1.5м -->
+        <line x1="48" y1="45" x2="48" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="42" y1="45" x2="54" y2="45" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="42" y1="115" x2="54" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="35" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 35 84)">1,5 м</text>
+        <!-- Общая длина 2.0м -->
+        <line x1="75" y1="144" x2="375" y2="144" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="75" y1="138" x2="75" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="375" y1="138" x2="375" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,0 м</text>
+      </svg>
+    `;
+  } else if (key === '3m') {
+    header.textContent = 'Схема: Бытовка 3м (4 сваи / опоры)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <rect x="65" y="38" width="320" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="65" y="108" width="320" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="105" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="317" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="105" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="317" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <line x1="119" y1="20" x2="331" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="119" y1="14" x2="119" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="331" y1="14" x2="331" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,4 м</text>
+        <line x1="45" y1="45" x2="45" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="39" y1="45" x2="51" y2="45" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="39" y1="115" x2="51" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="32" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 32 84)">1,5 м</text>
+        <line x1="65" y1="144" x2="385" y2="144" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="65" y1="138" x2="65" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="385" y1="138" x2="385" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">3,0 м</text>
+      </svg>
+    `;
+  } else if (key === '4m' || (key === 'custom' && qty === 4)) {
+    header.textContent = 'Схема: Бытовка 4м (4 сваи / опоры)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <rect x="55" y="38" width="340" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="55" y="108" width="340" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="80" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="342" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="80" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="342" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <line x1="94" y1="20" x2="356" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="94" y1="14" x2="94" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="356" y1="14" x2="356" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">3,4 м</text>
+        <line x1="38" y1="45" x2="38" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="32" y1="45" x2="44" y2="45" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="32" y1="115" x2="44" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="26" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 26 84)">1,5 м</text>
+        <line x1="55" y1="144" x2="395" y2="144" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="55" y1="138" x2="55" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="395" y1="138" x2="395" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">4,0 м</text>
+      </svg>
+    `;
+  } else if (key === '5m' || (key === 'custom' && qty === 6 && document.getElementById('object_name').value.includes('5'))) {
+    header.textContent = 'Схема: Бытовка 5м (6 свай / опор)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <rect x="45" y="38" width="360" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="45" y="108" width="360" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="65" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="211" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="357" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="65" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="211" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="357" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- Размеры 2.3м и 2.3м -->
+        <line x1="79" y1="20" x2="225" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="225" y1="20" x2="371" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="79" y1="14" x2="79" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="225" y1="14" x2="225" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="371" y1="14" x2="371" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="152" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,3 м</text>
+        <text x="298" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,3 м</text>
+        <!-- Ширина 1.5м -->
+        <line x1="30" y1="45" x2="30" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="24" y1="45" x2="36" y2="45" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="24" y1="115" x2="36" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="20" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 20 84)">1,5 м</text>
+        <!-- Длина 5.0м -->
+        <line x1="45" y1="144" x2="405" y2="144" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="45" y1="138" x2="45" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="405" y1="138" x2="405" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">5,0 м</text>
+      </svg>
+    `;
+  } else if (key === '6m' || (key === 'custom' && qty === 6)) {
+    header.textContent = 'Схема: Бытовка 6м (6 свай / опор)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <rect x="40" y="38" width="370" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="40" y="108" width="370" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="58" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="211" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="364" y="30" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="58" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="211" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="364" y="100" width="28" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- Размеры 2.7м и 2.7м -->
+        <line x1="72" y1="20" x2="225" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="225" y1="20" x2="378" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="72" y1="14" x2="72" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="225" y1="14" x2="225" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="378" y1="14" x2="378" y2="26" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="148" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,7 м</text>
+        <text x="302" y="16" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">2,7 м</text>
+        <!-- Ширина 1.5м -->
+        <line x1="26" y1="45" x2="26" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="20" y1="45" x2="32" y2="45" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="20" y1="115" x2="32" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="16" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 16 84)">1,5 м</text>
+        <!-- Длина 6.0м -->
+        <line x1="40" y1="144" x2="410" y2="144" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="40" y1="138" x2="40" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="410" y1="138" x2="410" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">6,0 м</text>
+      </svg>
+    `;
+  } else if (key === '7m' || (key === 'custom' && qty === 8)) {
+    header.textContent = 'Схема: Бытовка 7м (8 свай / опор)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <rect x="35" y="38" width="380" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="35" y="108" width="380" height="14" fill="#f59e0b" rx="2"/>
+        <rect x="52" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="167" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="282" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="372" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="52" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="167" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="282" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="372" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <line x1="35" y1="144" x2="415" y2="144" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="35" y1="138" x2="35" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="415" y1="138" x2="415" y2="150" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">7,0 м (4 точки опоры по длине)</text>
+      </svg>
+    `;
+  } else if (key === 'mod64' || (key === 'custom' && qty === 9)) {
+    header.textContent = 'Схема: Модуль 6х4 м (9 свай)';
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <!-- 3 бруса -->
+        <rect x="65" y="25" width="320" height="12" fill="#f59e0b" rx="2"/>
+        <rect x="65" y="74" width="320" height="12" fill="#f59e0b" rx="2"/>
+        <rect x="65" y="123" width="320" height="12" fill="#f59e0b" rx="2"/>
+        <!-- 9 свай 3х3 -->
+        <rect x="85" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="213" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="341" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="85" y="67" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="213" y="67" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="341" y="67" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="85" y="116" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="213" y="116" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="341" y="116" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <text x="225" y="12" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">Сетка 3х3 (9 свай)</text>
+      </svg>
+    `;
+  } else {
+    header.textContent = `Индивидуальное свайное поле: ${qty} свай`;
+    canvas.innerHTML = `
+      <svg viewBox="0 0 450 160">
+        <rect x="70" y="30" width="310" height="100" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="4 4" rx="4"/>
+        <text x="225" y="75" font-size="13" font-weight="700" text-anchor="middle" fill="#334155">Индивидуальный расчет: ${qty} шт.</text>
+        <text x="225" y="95" font-size="11" text-anchor="middle" fill="#64748b">Монтажная схема формируется инженером по проекту</text>
+      </svg>
+    `;
+  }
 }
 
 /* ОСНОВНОЙ ПЕРЕСЧЕТ И РЕНДЕР СМЕТЫ */
@@ -557,11 +797,11 @@ function updateCalculation() {
     tbody.appendChild(trDel);
   }
 
-  // 4. Генератор
+  // 4. Генератор (просто Генератор)
   if (state.generatorNeeded) {
     let trGen = document.createElement('tr');
     trGen.innerHTML = `
-      <td>Предоставление генератора монтажной бригады</td>
+      <td>Генератор</td>
       <td style="text-align:center; font-weight:700;">1</td>
       <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">3 000 руб.</td>
     `;
@@ -579,7 +819,7 @@ function updateCalculation() {
     tbody.appendChild(trCar);
   }
 
-  // Блок оплаты наличными
+  // Блок условий оплаты
   let trSummary = document.createElement('tr');
   trSummary.innerHTML = `
     <td colspan="3" class="tech-payment-info">
@@ -598,6 +838,9 @@ function updateCalculation() {
 
   document.getElementById('left_total').textContent = totalSum.toLocaleString('ru-RU');
   document.getElementById('kp_total_sum').textContent = `${totalSum.toLocaleString('ru-RU')} руб.`;
+
+  // Рендерим актуальную схему свай
+  renderSchemeSvg();
 }
 
 function toggleHidePrices() {
@@ -616,7 +859,13 @@ function resetCalculator(ask) {
 
   state.selectedPileId = 'p_76_20';
   state.pileQty = 4;
+  state.isManualMode = false;
+  state.activePresetKey = '4m';
   document.getElementById('piles_count').value = 4;
+
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn_pr_4').classList.add('active');
+
   setPowerSite(true);
   setCarryDistance(0);
   renderPileRadios();
@@ -644,10 +893,10 @@ function openOrderModal() {
   let electricText = '';
   if (state.hasPower) {
     electricText = state.generatorNeeded 
-      ? 'Электричество есть на участке (но требуется генератор бригады +3 000 руб.)' 
+      ? 'Электричество есть на участке, Генератор' 
       : 'Электричество есть на участке';
   } else {
-    electricText = 'Электричества нет на участке (требуется генератор +3 000 руб.)';
+    electricText = 'Электричества нет на участке, Генератор';
   }
 
   let carryText = '';
@@ -655,7 +904,6 @@ function openOrderModal() {
     carryText = `\n${state.carryName}: ${carryCost.toLocaleString('ru-RU')} руб.`;
   }
 
-  // Строго по структуре переписки Ксении и Алексея
   let text = `Заявка на установку свай: ${dateVal}\n`;
   text += `${objectVal}\n\n`;
   text += `${pile.name} - ${qty} шт с доставкой и установкой ${pileCostWithInstall.toLocaleString('ru-RU')} руб.\n\n`;
