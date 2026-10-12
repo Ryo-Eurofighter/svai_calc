@@ -1,1 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калькулятор свайного фундамента — АтомДомСтрой</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --accent-red: #dc2626;
+      --accent-green: #15803d;
+      --accent-orange: #ea580c;
+      --border-color: #cbd5e1;
+      --text-main: #1e293b;
+      --header-bg: #2c3e50;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+    body { background-color: #e2e8f0; color: var(--text-main); font-size: 13px; }
+    .app-container { display: flex; flex-direction: row; min-height: 100vh; max-width: 1750px; margin: 0 auto; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .config-panel { width: 50%; padding: 18px; border-right: 2px solid var(--border-color); overflow-y: auto; max-height: 100vh; background: #f8fafc; }
+    .preview-panel { width: 50%; padding: 26px; overflow-y: auto; max-height: 100vh; background: #ffffff; }
 
+    /* Кнопки */
+    .btn { display: inline-flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 4px; padding: 9px 15px; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s; font-size: 12px; }
+    .btn-red { background: var(--accent-red); color: #fff; }
+    .btn-red:hover { background: #b91c1c; }
+    .btn-green { background: var(--accent-green); color: #fff; }
+    .btn-green:hover { background: #166534; }
+    .btn-orange { background: var(--accent-orange); color: #fff; }
+    .btn-orange:hover { background: #c2410c; }
+    .btn-dark { background: #334155; color: #fff; }
+    .btn-dark:hover { background: #1e293b; }
+    .btn-full { width: 100%; margin-top: 8px; }
+
+    /* Секции / Аккордеоны */
+    .section-wrap { margin-top: 12px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; background: #fff; }
+    .section-header { font-size: 13px; font-weight: 700; background: var(--header-bg); color: #fff; padding: 9px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .section-header:hover { background: #1e2b37; }
+    .section-header .arrow { transition: transform 0.2s; font-size: 11px; }
+    .section-wrap.collapsed .section-header .arrow { transform: rotate(-90deg); }
+    .section-wrap.collapsed .section-body { display: none; }
+    .section-body { padding: 12px; }
+
+    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+    .top-header h2 { font-size: 18px; font-weight: 800; color: #0f172a; }
+
+    .client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .input-box input, .input-box select, .input-box textarea { width: 100%; padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; background: #fff; outline: none; }
+    .input-box input:focus, .input-box select:focus, .input-box textarea:focus { border-color: var(--primary); }
+
+    /* Пресеты объектов */
+    .presets-title { font-weight: 700; font-size: 11.5px; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
+    .preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+    .preset-btn { background: #f1f5f9; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 4px; text-align: center; cursor: pointer; font-size: 11px; font-weight: 600; color: #334155; transition: all 0.15s; }
+    .preset-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+    .preset-btn.active { background: #eff6ff; border-color: #2563eb; color: #1e3a8a; font-weight: 700; box-shadow: 0 0 0 1px #2563eb; }
+
+    /* Опции / Сваи */
+    .option-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 5px; }
+    .option-row:hover { background: #f8fafc; }
+    .option-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .option-left input[type="radio"], .option-left input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: var(--primary); }
+    .option-left label { font-size: 12.5px; font-weight: 600; cursor: pointer; user-select: none; }
+    .option-right { display: flex; align-items: center; gap: 6px; }
+    .price-badge { font-weight: 700; color: #0f172a; font-size: 12.5px; width: 85px; text-align: right; }
+
+    /* Селектор количества */
+    .counter-wrap { display: flex; align-items: center; gap: 8px; background: #f1f5f9; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; margin-top: 8px; justify-content: space-between; }
+    .counter-controls { display: flex; align-items: center; gap: 4px; }
+    .counter-btn { width: 28px; height: 28px; background: #fff; border: 1px solid var(--border-color); border-radius: 4px; font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .counter-btn:hover { background: #e2e8f0; }
+    .counter-input { width: 55px; text-align: center; font-size: 14px; font-weight: 800; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; outline: none; }
+
+    /* Плашка предупреждения о доплате */
+    .alert-pill { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 6px 10px; border-radius: 4px; font-size: 11.5px; font-weight: 700; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+
+    /* Тумблер электричества */
+    .switch-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 6px; }
+    .toggle-group { display: flex; background: #e2e8f0; padding: 2px; border-radius: 4px; gap: 2px; }
+    .toggle-btn { border: none; padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: 3px; background: transparent; color: #64748b; transition: all 0.15s; }
+    .toggle-btn.active { background: #1e3a8a; color: #fff; }
+
+    /* Блок Доставки */
+    .delivery-box { background: #1e293b; color: #fff; padding: 12px 14px; border-radius: 4px; font-weight: 700; margin-top: 8px; }
+    .delivery-calc-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+    .delivery-calc-row input { text-align: right; width: 95px; padding: 5px 8px; border-radius: 4px; border: none; font-weight: 700; font-size: 12px; }
+
+    /* Итог слева */
+    .total-box-left { background: #ea580c; color: #fff; padding: 12px 16px; border-radius: 4px; margin-top: 16px; font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Правая панель (КП / Смета) */
+    .kp-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 14px; }
+    .kp-logo-area { display: flex; align-items: center; gap: 10px; }
+    .kp-logo-img { max-height: 52px; max-width: 140px; object-fit: contain; }
+    .kp-logo-fallback { width: 42px; height: 42px; border-radius: 50%; border: 3px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #16a34a; }
+    .kp-logo-text { font-size: 19px; font-weight: 900; color: #0f172a; }
+    .kp-contacts { text-align: right; font-size: 11.5px; color: #334155; line-height: 1.35; }
+    .kp-contacts strong { color: #0f172a; }
+
+    .kp-info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; line-height: 1.5; }
+    .kp-info-box span { font-weight: 700; color: #0f172a; }
+
+    .kp-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+    .kp-table th { background: #f8fafc; padding: 8px 10px; font-weight: 700; text-align: left; border-bottom: 2px solid #cbd5e1; font-size: 12.5px; color: #334155; }
+    .kp-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; font-size: 12.5px; vertical-align: middle; }
+
+    .kp-total-banner { background: #1e3a8a; color: #fff; padding: 12px 18px; border-radius: 6px; font-size: 19px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .kp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .tech-payment-info { background: #f8fafc; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 10px; color: #1e293b; font-size: 12px; line-height: 1.5; }
+
+    /* Модальное окно генерации заявки */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+    .modal-overlay.active { display: flex; }
+    .modal-window { background: #fff; width: 100%; max-width: 780px; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 92vh; }
+    .modal-head { padding: 12px 16px; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; font-weight: 800; font-size: 14px; color: #0f172a; display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
+    .modal-body textarea { width: 100%; height: 380px; padding: 12px; font-family: Consolas, Monaco, "Courier New", monospace; font-size: 12.5px; line-height: 1.5; border: 1px solid #cbd5e1; border-radius: 4px; resize: none; background: #f8fafc; color: #0f172a; outline: none; }
+    .modal-foot { padding: 10px 16px; background: #f8fafc; border-top: 1px solid #cbd5e1; display: flex; justify-content: flex-end; gap: 10px; }
+
+    .hide-prices .hideable-price { display: none !important; }
+
+    @media print {
+      body { background: #fff; }
+      .config-panel, .kp-actions, .modal-overlay { display: none !important; }
+      .app-container { box-shadow: none; max-width: 100%; }
+      .preview-panel { width: 100%; padding: 0; max-height: none; overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- ЛЕВАЯ ПАНЕЛЬ: НАСТРОЙКИ -->
+  <div class="config-panel">
+    <div class="top-header">
+      <h2>Свайный калькулятор</h2>
+      <button class="btn btn-red" onclick="resetCalculator(true)">ОБНУЛИТЬ РАСЧЕТ</button>
+    </div>
+
+    <!-- Данные заявки / клиента -->
+    <div class="client-grid">
+      <div class="input-box"><input type="text" id="order_date" placeholder="Дата монтажа (напр. 16.10)" oninput="updateCalculation()"></div>
+      <div class="input-box"><input type="text" id="manager_name" placeholder="Ответственный менеджер" oninput="saveManagerName(); updateCalculation();"></div>
+      <div class="input-box"><input type="text" id="client_phone" placeholder="Номер клиента для связи" oninput="updateCalculation()"></div>
+      <div class="input-box"><input type="text" id="object_name" placeholder="Объект (напр. Под бытовку 4х2,3)" oninput="updateCalculation()"></div>
+      <div class="input-box" style="grid-column: span 2;"><input type="text" id="client_addr" placeholder="Адрес / Координаты участка" oninput="updateCalculation()"></div>
+    </div>
+
+    <!-- 1. Выбор свай и количества -->
+    <div class="section-wrap" id="sec_piles">
+      <div class="section-header" onclick="toggleSection('sec_piles')">
+        <span>1. Номенклатура свай и количество</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="presets-title">Быстрый подбор под размер постройки:</div>
+        <div class="preset-grid">
+          <button class="preset-btn" onclick="applyPreset('Бытовка 2м', 4)">2м (4 шт.)</button>
+          <button class="preset-btn" onclick="applyPreset('Бытовка 3м', 4)">3м (4 шт.)</button>
+          <button class="preset-btn active" id="btn_preset_4" onclick="applyPreset('Бытовка 4х2,3', 4)">4м (4 шт.)</button>
+          <button class="preset-btn" onclick="applyPreset('Бытовка 5м', 6)">5м (6 шт.)</button>
+          <button class="preset-btn" onclick="applyPreset('Бытовка 6м', 6)">6м (6 шт.)</button>
+          <button class="preset-btn" onclick="applyPreset('Бытовка 7м', 8)">7м (8 шт.)</button>
+          <button class="preset-btn" style="grid-column: span 2;" onclick="applyPreset('Модуль 6х4', 9)">Модуль 6х4 (9 шт.)</button>
+        </div>
+
+        <div id="piles_radios"></div>
+
+        <div class="counter-wrap">
+          <span style="font-weight:700;">Количество свай:</span>
+          <div class="counter-controls">
+            <button class="counter-btn" onclick="changePileQty(-1)">−</button>
+            <input type="number" id="piles_count" class="counter-input" min="1" max="100" value="4" oninput="onPileQtyInput(this.value)">
+            <button class="counter-btn" onclick="changePileQty(1)">+</button>
+          </div>
+        </div>
+
+        <div id="under_four_alert" class="alert-pill">
+          <span>⚠️</span>
+          <span>При заказе 4 свай и менее действует доплата: +4 000 руб.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Условия на участке (Электричество и генератор) -->
+    <div class="section-wrap" id="sec_power">
+      <div class="section-header" onclick="toggleSection('sec_power')">
+        <span>2. Электричество и генератор</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="switch-row">
+          <span style="font-weight:700;">Электричество на участке:</span>
+          <div class="toggle-group">
+            <button type="button" class="toggle-btn active" id="btn_power_yes" onclick="setPowerSite(true)">Есть</button>
+            <button type="button" class="toggle-btn" id="btn_power_no" onclick="setPowerSite(false)">Нет</button>
+          </div>
+        </div>
+
+        <div class="option-row">
+          <div class="option-left">
+            <input type="checkbox" id="chk_generator" onchange="onGeneratorManualChange(this.checked)">
+            <label for="chk_generator">Генератор монтажной бригады</label>
+          </div>
+          <div class="price-badge hideable-price">+3 000 руб.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Пронос свай -->
+    <div class="section-wrap" id="sec_carry">
+      <div class="section-header" onclick="toggleSection('sec_carry')">
+        <span>3. Пронос свай вручную от машины</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="option-row">
+          <div class="option-left">
+            <input type="radio" name="carry_dist" id="carry_0" checked onchange="setCarryDistance(0)">
+            <label for="carry_0">Стандартный заезд (до 50 метров)</label>
+          </div>
+          <div class="price-badge hideable-price">0 руб.</div>
+        </div>
+        <div class="option-row">
+          <div class="option-left">
+            <input type="radio" name="carry_dist" id="carry_50" onchange="setCarryDistance(3000)">
+            <label for="carry_50">Пронос свай от 50 до 100 метров</label>
+          </div>
+          <div class="price-badge hideable-price">+3 000 руб.</div>
+        </div>
+        <div class="option-row">
+          <div class="option-left">
+            <input type="radio" name="carry_dist" id="carry_100" onchange="setCarryDistance(5000)">
+            <label for="carry_100">Пронос свай более 100 метров</label>
+          </div>
+          <div class="price-badge hideable-price">+5 000 руб.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Доставка бура и оборудования -->
+    <div class="section-wrap" id="sec_delivery">
+      <div class="section-header" onclick="toggleSection('sec_delivery')">
+        <span>4. Доставка бура и оборудования</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="section-body">
+        <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer; margin-bottom:8px;">
+          <input type="checkbox" id="delivery_included" checked onchange="updateCalculation()"> Включить доставку в расчет
+        </label>
+        <div class="delivery-box">
+          <div style="font-size:11.5px; color:#94a3b8; margin-bottom:8px;">
+            Расчет от м. Медведково: до 100 км — 5 000 ₽ (минималка), далее 50 ₽/км
+          </div>
+          <div class="delivery-calc-row">
+            <span>Расстояние от м. Медведково, км:</span>
+            <input type="number" id="delivery_km" value="0" min="0" oninput="onDeliveryKmChange()">
+          </div>
+          <div class="delivery-calc-row" style="margin-bottom:0; font-size:15px; margin-top:8px;">
+            <span>ДОСТАВКА ОБОРУДОВАНИЯ:</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="delivery_price" value="5000" oninput="onCustomDeliveryPrice()">
+              <span>руб.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Итог слева -->
+    <div class="total-box-left">
+      <span>ИТОГО К ОПЛАТЕ: <span id="left_total">0</span> РУБ.</span>
+    </div>
+
+    <button class="btn btn-dark btn-full" style="margin-top: 14px;" onclick="toggleHidePrices()">СКРЫТЬ ЦЕНЫ</button>
+    <button class="btn btn-red btn-full" onclick="resetCalculator(true)">ОБНУЛИТЬ РАСЧЕТ</button>
+    <button class="btn btn-green btn-full" onclick="openOrderModal()">СКОПИРОВАТЬ ЗАЯВКУ МАСТЕРУ</button>
+  </div>
+
+  <!-- ПРАВАЯ ПАНЕЛЬ: БЛАНК КП / СМЕТА -->
+  <div class="preview-panel">
+    <div class="kp-header">
+      <div class="kp-logo-area">
+        <img src="logo.jpg" alt="Логотип" class="kp-logo-img" onerror="this.style.display='none'; document.getElementById('logo_fallback').style.display='flex';">
+        <div id="logo_fallback" class="kp-logo-fallback" style="display:none;">⌂</div>
+        <div>
+          <div style="font-size:11px; text-transform:uppercase; color:#64748b; letter-spacing:1px; font-weight:700;">СМЕТА НА МОНТАЖ СВАЙНОГО ФУНДАМЕНТА</div>
+          <div class="kp-logo-text">АтомДомСтрой</div>
+        </div>
+      </div>
+      <div class="kp-contacts">
+        <div><strong>Тел:</strong> 7 (995) 904-81-01</div>
+        <div><strong>WhatsApp:</strong> 7 (995) 122-13-56</div>
+        <div><strong>E-mail:</strong> AtomDomStroy@yandex.ru</div>
+        <div><strong>Менеджер:</strong> <span id="kp_out_manager">—</span></div>
+      </div>
+    </div>
+
+    <div class="kp-info-box">
+      <div><strong>Дата монтажа:</strong> <span id="kp_out_date">—</span></div>
+      <div><strong>Объект:</strong> <span id="kp_out_object">Под бытовку 4х2,3</span></div>
+      <div><strong>Адрес объекта:</strong> <span id="kp_out_addr">—</span></div>
+      <div><strong>Контактный телефон:</strong> <span id="kp_out_phone">—</span></div>
+    </div>
+
+    <!-- Таблица КП -->
+    <table class="kp-table">
+      <thead>
+        <tr>
+          <th>Наименование услуги / материала</th>
+          <th style="width:70px; text-align:center;">Кол-во</th>
+          <th class="hideable-price" style="width:115px; text-align:right;">Сумма</th>
+        </tr>
+      </thead>
+      <tbody id="kp_table_body"></tbody>
+    </table>
+
+    <!-- Итого к оплате -->
+    <div class="kp-total-banner">
+      <span>ИТОГО К ОПЛАТЕ:</span>
+      <span id="kp_total_sum">0 руб.</span>
+    </div>
+
+    <div class="kp-actions">
+      <button class="btn btn-green" onclick="openOrderModal()">СФОРМИРОВАТЬ ЗАЯВКУ МАСТЕРУ</button>
+      <button class="btn btn-dark" onclick="window.print()">ПЕЧАТЬ СМЕТЫ</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ЗАЯВКИ -->
+<div class="modal-overlay" id="order_modal">
+  <div class="modal-window">
+    <div class="modal-head">
+      <span>Готовая заявка для отправки монтажнику / мастеру</span>
+      <button style="background:none; border:none; font-size:18px; cursor:pointer; color:#64748b;" onclick="closeOrderModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="modal_text"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" onclick="closeOrderModal()">ЗАКРЫТЬ</button>
+      <button class="btn btn-green" onclick="copyOrderText()">СКОПИРОВАТЬ В БУФЕР</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* НОМЕНКЛАТУРА СВАЙ И ЦЕНЫ */
+const PILES_DATA = [
+  { id: 'p_89_20', name: 'Свая ø89мм 2.0 м', price: 5200 },
+  { id: 'p_89_25', name: 'Свая ø89мм 2.5 м', price: 5600 },
+  { id: 'p_76_20', name: 'Свая ø76мм 2.0 м', price: 4400 },
+  { id: 'p_76_25', name: 'Свая ø76мм 2.5 м', price: 4700 },
+  { id: 'p_76_30', name: 'Свая ø76мм 3.0 м', price: 5000 }
+];
+
+/* ТЕКУЩЕЕ СОСТОЯНИЕ */
+let state = {
+  selectedPileId: 'p_76_20',
+  pileQty: 4,
+  hasPower: true,
+  generatorNeeded: false,
+  carryPrice: 0,
+  carryName: 'Стандартный заезд (до 50 м)',
+  deliveryIncluded: true,
+  deliveryKm: 0,
+  deliveryPrice: 5000
+};
+
+function init() {
+  // Загружаем сохраненное имя менеджера
+  const savedMgr = localStorage.getItem('svai_calc_manager');
+  if (savedMgr) {
+    document.getElementById('manager_name').value = savedMgr;
+  }
+  
+  // Дата по умолчанию (сегодня в формате ДД.ММ)
+  const d = new Date();
+  const dayStr = String(d.getDate()).padStart(2, '0');
+  const monthStr = String(d.getMonth() + 1).padStart(2, '0');
+  document.getElementById('order_date').value = `${dayStr}.${monthStr}`;
+  document.getElementById('object_name').value = 'Под бытовку 4х2,3';
+
+  renderPileRadios();
+  onDeliveryKmChange();
+  updateCalculation();
+}
+
+function saveManagerName() {
+  const val = document.getElementById('manager_name').value;
+  localStorage.setItem('svai_calc_manager', val);
+}
+
+function toggleSection(secId) {
+  const el = document.getElementById(secId);
+  if (el) el.classList.toggle('collapsed');
+}
+
+function renderPileRadios() {
+  const container = document.getElementById('piles_radios');
+  container.innerHTML = '';
+  PILES_DATA.forEach(p => {
+    const isChecked = state.selectedPileId === p.id;
+    container.innerHTML += `
+      <div class="option-row">
+        <div class="option-left">
+          <input type="radio" name="pile_type" id="${p.id}" ${isChecked ? 'checked' : ''} onchange="setPileType('${p.id}')">
+          <label for="${p.id}">${p.name}</label>
+        </div>
+        <div class="price-badge hideable-price">${p.price.toLocaleString('ru-RU')} ₽/шт</div>
+      </div>
+    `;
+  });
+}
+
+function setPileType(id) {
+  state.selectedPileId = id;
+  updateCalculation();
+}
+
+function applyPreset(name, count) {
+  document.getElementById('object_name').value = `Под ${name.toLowerCase()}`;
+  document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  state.pileQty = count;
+  document.getElementById('piles_count').value = count;
+  updateCalculation();
+}
+
+function changePileQty(delta) {
+  state.pileQty = Math.max(1, state.pileQty + delta);
+  document.getElementById('piles_count').value = state.pileQty;
+  updateCalculation();
+}
+
+function onPileQtyInput(val) {
+  state.pileQty = Math.max(1, parseInt(val) || 1);
+  updateCalculation();
+}
+
+/* ЛОГИКА ЭЛЕКТРИЧЕСТВА И ГЕНЕРАТОРА */
+function setPowerSite(hasPower) {
+  state.hasPower = hasPower;
+  const btnYes = document.getElementById('btn_power_yes');
+  const btnNo = document.getElementById('btn_power_no');
+  const chkGen = document.getElementById('chk_generator');
+
+  if (hasPower) {
+    btnYes.classList.add('active');
+    btnNo.classList.remove('active');
+    // Автоматически снимаем генератор, если свет есть
+    state.generatorNeeded = false;
+    chkGen.checked = false;
+  } else {
+    btnNo.classList.add('active');
+    btnYes.classList.remove('active');
+    // Автоматически включаем генератор, если света нет
+    state.generatorNeeded = true;
+    chkGen.checked = true;
+  }
+  updateCalculation();
+}
+
+function onGeneratorManualChange(checked) {
+  state.generatorNeeded = checked;
+  updateCalculation();
+}
+
+function setCarryDistance(price) {
+  state.carryPrice = price;
+  if (price === 0) state.carryName = 'Стандартный заезд (до 50 м)';
+  if (price === 3000) state.carryName = 'Пронос свай 50–100 м';
+  if (price === 5000) state.carryName = 'Пронос свай более 100 м';
+  updateCalculation();
+}
+
+/* ДОСТАВКА */
+function onDeliveryKmChange() {
+  const km = parseInt(document.getElementById('delivery_km').value) || 0;
+  state.deliveryKm = km;
+  // До 100 км — 5000 ₽, далее 50 ₽ за каждый км
+  let price = 5000;
+  if (km > 100) {
+    price = km * 50;
+  }
+  state.deliveryPrice = price;
+  document.getElementById('delivery_price').value = price;
+  updateCalculation();
+}
+
+function onCustomDeliveryPrice() {
+  state.deliveryPrice = parseInt(document.getElementById('delivery_price').value) || 0;
+  updateCalculation();
+}
+
+/* ОСНОВНОЙ ПЕРЕСЧЕТ И РЕНДЕР СМЕТЫ */
+function updateCalculation() {
+  const pile = PILES_DATA.find(p => p.id === state.selectedPileId) || PILES_DATA[2];
+  const qty = state.pileQty;
+  const pileBaseTotal = pile.price * qty;
+
+  // Доплата за 4 сваи и менее (+4 000 руб.)
+  const isSmallOrder = qty <= 4;
+  const smallOrderSurcharge = isSmallOrder ? 4000 : 0;
+  document.getElementById('under_four_alert').style.display = isSmallOrder ? 'flex' : 'none';
+
+  const pileFullCost = pileBaseTotal + smallOrderSurcharge;
+
+  // Генератор
+  const genCost = state.generatorNeeded ? 3000 : 0;
+
+  // Пронос
+  const carryCost = state.carryPrice;
+
+  // Доставка
+  const isDeliv = document.getElementById('delivery_included').checked;
+  state.deliveryIncluded = isDeliv;
+  const delivCost = isDeliv ? state.deliveryPrice : 0;
+
+  // ИТОГО
+  const totalSum = pileFullCost + genCost + carryCost + delivCost;
+
+  // Обновление таблицы справа
+  const tbody = document.getElementById('kp_table_body');
+  tbody.innerHTML = '';
+
+  // 1. Сваи с установкой
+  let trPile = document.createElement('tr');
+  trPile.innerHTML = `
+    <td><strong>${pile.name} с установкой</strong></td>
+    <td style="text-align:center; font-weight:700;">${qty} шт.</td>
+    <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${pileBaseTotal.toLocaleString('ru-RU')} руб.</td>
+  `;
+  tbody.appendChild(trPile);
+
+  // 2. Доплата за малый объем
+  if (isSmallOrder) {
+    let trSmall = document.createElement('tr');
+    trSmall.innerHTML = `
+      <td style="color:#b91c1c; font-weight:600;">Доплата за малый объем (4 сваи и менее)</td>
+      <td style="text-align:center; font-weight:700;">1</td>
+      <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">4 000 руб.</td>
+    `;
+    tbody.appendChild(trSmall);
+  }
+
+  // 3. Доставка оборудования
+  if (isDeliv) {
+    let trDel = document.createElement('tr');
+    trDel.innerHTML = `
+      <td>Доставка бура и оборудования (${state.deliveryKm} км от Медведково)</td>
+      <td style="text-align:center; font-weight:700;">1</td>
+      <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${delivCost.toLocaleString('ru-RU')} руб.</td>
+    `;
+    tbody.appendChild(trDel);
+  }
+
+  // 4. Генератор
+  if (state.generatorNeeded) {
+    let trGen = document.createElement('tr');
+    trGen.innerHTML = `
+      <td>Предоставление генератора монтажной бригады</td>
+      <td style="text-align:center; font-weight:700;">1</td>
+      <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">3 000 руб.</td>
+    `;
+    tbody.appendChild(trGen);
+  }
+
+  // 5. Пронос
+  if (carryCost > 0) {
+    let trCar = document.createElement('tr');
+    trCar.innerHTML = `
+      <td>${state.carryName}</td>
+      <td style="text-align:center; font-weight:700;">1</td>
+      <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${carryCost.toLocaleString('ru-RU')} руб.</td>
+    `;
+    tbody.appendChild(trCar);
+  }
+
+  // Блок оплаты наличными
+  let trSummary = document.createElement('tr');
+  trSummary.innerHTML = `
+    <td colspan="3" class="tech-payment-info">
+      <div><strong>Форма оплаты:</strong> 100% оплата мастеру НАЛИЧНЫМИ по факту монтажа</div>
+      <div><strong>Сваи берем:</strong> минимум за 1 день до установки бытовки</div>
+    </td>
+  `;
+  tbody.appendChild(trSummary);
+
+  // Текстовые поля КП
+  document.getElementById('kp_out_date').textContent = document.getElementById('order_date').value || '—';
+  document.getElementById('kp_out_manager').textContent = document.getElementById('manager_name').value || '—';
+  document.getElementById('kp_out_object').textContent = document.getElementById('object_name').value || '—';
+  document.getElementById('kp_out_addr').textContent = document.getElementById('client_addr').value || '—';
+  document.getElementById('kp_out_phone').textContent = document.getElementById('client_phone').value || '—';
+
+  document.getElementById('left_total').textContent = totalSum.toLocaleString('ru-RU');
+  document.getElementById('kp_total_sum').textContent = `${totalSum.toLocaleString('ru-RU')} руб.`;
+}
+
+function toggleHidePrices() {
+  document.body.classList.toggle('hide-prices');
+}
+
+function resetCalculator(ask) {
+  if (ask && !confirm('Очистить все параметры расчета?')) return;
+  document.getElementById('object_name').value = 'Под бытовку 4х2,3';
+  document.getElementById('client_addr').value = '';
+  document.getElementById('client_phone').value = '';
+  document.getElementById('delivery_km').value = '0';
+  document.getElementById('delivery_price').value = '5000';
+  document.getElementById('carry_0').checked = true;
+  document.getElementById('delivery_included').checked = true;
+
+  state.selectedPileId = 'p_76_20';
+  state.pileQty = 4;
+  document.getElementById('piles_count').value = 4;
+  setPowerSite(true);
+  setCarryDistance(0);
+  renderPileRadios();
+  updateCalculation();
+}
+
+/* ГЕНЕРАЦИЯ ЗАЯВКИ ПО ОБРАЗЦУ КЛИЕНТА */
+function openOrderModal() {
+  const pile = PILES_DATA.find(p => p.id === state.selectedPileId) || PILES_DATA[2];
+  const qty = state.pileQty;
+  const isSmall = qty <= 4;
+  const pileCostWithInstall = (pile.price * qty) + (isSmall ? 4000 : 0);
+
+  const dateVal = document.getElementById('order_date').value || '—';
+  const objectVal = document.getElementById('object_name').value || 'Под бытовку';
+  const addrVal = document.getElementById('client_addr').value || 'Уточняется';
+  const phoneVal = document.getElementById('client_phone').value || '—';
+  const managerVal = document.getElementById('manager_name').value || '—';
+
+  const delivCost = state.deliveryIncluded ? state.deliveryPrice : 0;
+  const genCost = state.generatorNeeded ? 3000 : 0;
+  const carryCost = state.carryPrice;
+  const total = pileCostWithInstall + delivCost + genCost + carryCost;
+
+  let electricText = '';
+  if (state.hasPower) {
+    electricText = state.generatorNeeded 
+      ? 'Электричество есть на участке (но требуется генератор бригады +3 000 руб.)' 
+      : 'Электричество есть на участке';
+  } else {
+    electricText = 'Электричества нет на участке (требуется генератор +3 000 руб.)';
+  }
+
+  let carryText = '';
+  if (carryCost > 0) {
+    carryText = `\n${state.carryName}: ${carryCost.toLocaleString('ru-RU')} руб.`;
+  }
+
+  // Строго по структуре переписки Ксении и Алексея
+  let text = `Заявка на установку свай: ${dateVal}\n`;
+  text += `${objectVal}\n\n`;
+  text += `${pile.name} - ${qty} шт с доставкой и установкой ${pileCostWithInstall.toLocaleString('ru-RU')} руб.\n\n`;
+  text += `Доставка бура и оборудования: ${addrVal}\n`;
+  text += `${delivCost.toLocaleString('ru-RU')} руб.\n`;
+  text += `${electricText}${carryText}\n`;
+  text += `Контакты\n`;
+  text += `Номер клиента для связи: ${phoneVal}\n`;
+  text += `Всего: ${total.toLocaleString('ru-RU')} руб. оплата мастеру наличными\n`;
+  text += `Ответственный менеджер: ${managerVal}`;
+
+  document.getElementById('modal_text').value = text;
+  document.getElementById('order_modal').classList.add('active');
+}
+
+function closeOrderModal() {
+  document.getElementById('order_modal').classList.remove('active');
+}
+
+function copyOrderText() {
+  const area = document.getElementById('modal_text');
+  area.select();
+  navigator.clipboard.writeText(area.value).then(() => {
+    alert('Заявка успешно скопирована в буфер обмена!');
+    closeOrderModal();
+  });
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
