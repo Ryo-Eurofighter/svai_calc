@@ -281,7 +281,7 @@
 
     <button class="btn btn-dark btn-full" style="margin-top: 14px;" onclick="toggleHidePrices()">СКРЫТЬ ЦЕНЫ</button>
     <button class="btn btn-red btn-full" onclick="resetCalculator(true)">ОБНУЛИТЬ РАСЧЕТ</button>
-    <button class="btn btn-green btn-full" onclick="openOrderModal()">СКОПИРОВАТЬ ЗАЯВКУ МАСТЕРУ</button>
+    <button class="btn btn-green btn-full" onclick="openOrderModal('master')">СКОПИРОВАТЬ ЗАЯВКУ МАСТЕРУ</button>
   </div>
 
   <!-- ПРАВАЯ ПАНЕЛЬ: БЛАНК КП / СМЕТА -->
@@ -335,8 +335,8 @@
     </div>
 
     <div class="kp-actions">
-      <button class="btn btn-green" onclick="openOrderModal()">СФОРМИРОВАТЬ ЗАЯВКУ МАСТЕРУ</button>
-      <button class="btn btn-dark" onclick="window.print()">ПЕЧАТЬ СМЕТЫ</button>
+      <button class="btn btn-green" onclick="openOrderModal('master')">СФОРМИРОВАТЬ ЗАЯВКУ МАСТЕРУ</button>
+      <button class="btn btn-orange" onclick="openOrderModal('client')">ЗАЯВКА ДЛЯ КЛИЕНТА</button>
     </div>
   </div>
 </div>
@@ -345,7 +345,7 @@
 <div class="modal-overlay" id="order_modal">
   <div class="modal-window">
     <div class="modal-head">
-      <span>Готовая заявка для отправки монтажнику / мастеру</span>
+      <span id="modal_head_title">Готовая заявка</span>
       <button style="background:none; border:none; font-size:18px; cursor:pointer; color:#64748b;" onclick="closeOrderModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -380,7 +380,8 @@ let state = {
   carryName: 'Стандартный заезд (до 50 м)',
   deliveryIncluded: true,
   deliveryKm: 0,
-  deliveryPrice: 5000
+  deliveryPrice: 5000,
+  currentModalMode: 'master'
 };
 
 function init() {
@@ -527,7 +528,7 @@ function onCustomDeliveryPrice() {
   updateCalculation();
 }
 
-/* ОТРИСОВКА СХЕМ СВАЙНОГО ПОЛЯ */
+/* ОТРИСОВКА СХЕМ СВАЙНОГО ПОЛЯ (С РАЗМЕРАМИ ПО ЦЕНТРАМ) */
 function renderSchemeSvg() {
   const canvas = document.getElementById('scheme_canvas');
   const header = document.getElementById('scheme_header_title');
@@ -670,37 +671,77 @@ function renderSchemeSvg() {
       <svg viewBox="0 0 450 160">
         <rect x="35" y="38" width="380" height="14" fill="#f59e0b" rx="2"/>
         <rect x="35" y="108" width="380" height="14" fill="#f59e0b" rx="2"/>
-        <rect x="52" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="167" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="282" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="372" y="30" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="52" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="167" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="282" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="372" y="100" width="26" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- 4 сваи сверху -->
+        <rect x="48" y="30" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="156" y="30" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="264" y="30" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="372" y="30" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- 4 сваи снизу -->
+        <rect x="48" y="100" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="156" y="100" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="264" y="100" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="372" y="100" width="24" height="30" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- Размеры по центрам сверху -->
+        <line x1="60" y1="18" x2="168" y2="18" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="168" y1="18" x2="276" y2="18" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="276" y1="18" x2="384" y2="18" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="60" y1="12" x2="60" y2="24" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="168" y1="12" x2="168" y2="24" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="276" y1="12" x2="276" y2="24" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="384" y1="12" x2="384" y2="24" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="114" y="14" font-size="10.5" font-weight="700" text-anchor="middle" fill="#0f172a">2,2 м</text>
+        <text x="222" y="14" font-size="10.5" font-weight="700" text-anchor="middle" fill="#0f172a">2,2 м</text>
+        <text x="330" y="14" font-size="10.5" font-weight="700" text-anchor="middle" fill="#0f172a">2,2 м</text>
+        <!-- Ширина слева -->
+        <line x1="24" y1="45" x2="24" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="18" y1="45" x2="30" y2="45" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="18" y1="115" x2="30" y2="115" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="15" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 15 84)">1,5 м</text>
+        <!-- Общая длина снизу -->
         <line x1="35" y1="144" x2="415" y2="144" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="35" y1="138" x2="35" y2="150" stroke="#0f172a" stroke-width="1.2"/>
         <line x1="415" y1="138" x2="415" y2="150" stroke="#0f172a" stroke-width="1.2"/>
-        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">7,0 м (4 точки опоры по длине)</text>
+        <text x="225" y="156" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">7,0 м</text>
       </svg>
     `;
   } else if (key === 'mod64' || (key === 'custom' && qty === 9)) {
     header.textContent = 'Схема: Модуль 6х4 м (9 свай)';
     canvas.innerHTML = `
       <svg viewBox="0 0 450 160">
-        <rect x="65" y="25" width="320" height="12" fill="#f59e0b" rx="2"/>
-        <rect x="65" y="74" width="320" height="12" fill="#f59e0b" rx="2"/>
-        <rect x="65" y="123" width="320" height="12" fill="#f59e0b" rx="2"/>
-        <rect x="85" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="213" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="341" y="18" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="85" y="67" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="213" y="67" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="341" y="67" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="85" y="116" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="213" y="116" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <rect x="341" y="116" width="24" height="26" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
-        <text x="225" y="12" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">Сетка 3х3 (9 свай)</text>
+        <rect x="65" y="30" width="320" height="12" fill="#f59e0b" rx="2"/>
+        <rect x="65" y="76" width="320" height="12" fill="#f59e0b" rx="2"/>
+        <rect x="65" y="122" width="320" height="12" fill="#f59e0b" rx="2"/>
+        <!-- 9 свай 3х3 -->
+        <rect x="85" y="24" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="213" y="24" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="341" y="24" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="85" y="70" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="213" y="70" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="341" y="70" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="85" y="116" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="213" y="116" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <rect x="341" y="116" width="24" height="24" fill="#64748b" stroke="#334155" stroke-width="1.5" rx="2"/>
+        <!-- Размеры по длине сверху -->
+        <line x1="97" y1="14" x2="225" y2="14" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="225" y1="14" x2="353" y2="14" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="97" y1="8" x2="97" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="225" y1="8" x2="225" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="353" y1="8" x2="353" y2="20" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="161" y="11" font-size="10.5" font-weight="700" text-anchor="middle" fill="#0f172a">2,8 м</text>
+        <text x="289" y="11" font-size="10.5" font-weight="700" text-anchor="middle" fill="#0f172a">2,8 м</text>
+        <!-- Размеры по ширине слева -->
+        <line x1="45" y1="36" x2="45" y2="82" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="45" y1="82" x2="45" y2="128" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="39" y1="36" x2="51" y2="36" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="39" y1="82" x2="51" y2="82" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="39" y1="128" x2="51" y2="128" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="33" y="62" font-size="10" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 33 62)">1,8 м</text>
+        <text x="33" y="108" font-size="10" font-weight="700" text-anchor="middle" fill="#0f172a" transform="rotate(-90 33 108)">1,8 м</text>
+        <!-- Нижняя подпись -->
+        <line x1="65" y1="148" x2="385" y2="148" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="65" y1="142" x2="65" y2="154" stroke="#0f172a" stroke-width="1.2"/>
+        <line x1="385" y1="142" x2="385" y2="154" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="225" y="157" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">6,0 х 4,0 м</text>
       </svg>
     `;
   } else {
@@ -728,9 +769,6 @@ function updateCalculation() {
   // Плашка для менеджера слева видна
   document.getElementById('under_four_alert').style.display = isSmallOrder ? 'flex' : 'none';
 
-  // В смете доплата за малый объем бесшовно включена в саму позицию свай
-  const pileCostCombined = pileBaseTotal + smallOrderSurcharge;
-
   // Генератор
   const genCost = state.generatorNeeded ? 3000 : 0;
 
@@ -743,22 +781,33 @@ function updateCalculation() {
   const delivCost = isDeliv ? state.deliveryPrice : 0;
 
   // ИТОГО
-  const totalSum = pileCostCombined + genCost + carryCost + delivCost;
+  const totalSum = pileBaseTotal + smallOrderSurcharge + genCost + carryCost + delivCost;
 
-  // Обновление таблицы справа (для клиента)
+  // Обновление таблицы справа (В ПРАВОЙ КОЛОНКЕ ДОБАВЛЕНА СТРОКА ДОПЛАТЫ)
   const tbody = document.getElementById('kp_table_body');
   tbody.innerHTML = '';
 
-  // 1. Сваи с установкой (без отдельной строки доплаты!)
+  // 1. Сваи с установкой (базовая стоимость за штуку и сумма без наценки)
   let trPile = document.createElement('tr');
   trPile.innerHTML = `
     <td><strong>${pile.name} с установкой</strong></td>
     <td style="text-align:center; font-weight:700;">${qty} шт.</td>
-    <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${pileCostCombined.toLocaleString('ru-RU')} руб.</td>
+    <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap;">${pileBaseTotal.toLocaleString('ru-RU')} руб.</td>
   `;
   tbody.appendChild(trPile);
 
-  // 2. Доставка оборудования
+  // 2. Упоминание доплаты за малый объем в правой колонке
+  if (isSmallOrder) {
+    let trSurcharge = document.createElement('tr');
+    trSurcharge.innerHTML = `
+      <td style="color:#b91c1c; font-weight:600;">Доплата за минимальный монтаж (до 4 свай включительно)</td>
+      <td style="text-align:center; font-weight:700;">1</td>
+      <td class="hideable-price" style="text-align:right; font-weight:700; white-space:nowrap; color:#b91c1c;">4 000 руб.</td>
+    `;
+    tbody.appendChild(trSurcharge);
+  }
+
+  // 3. Доставка оборудования
   if (isDeliv) {
     let trDel = document.createElement('tr');
     trDel.innerHTML = `
@@ -769,7 +818,7 @@ function updateCalculation() {
     tbody.appendChild(trDel);
   }
 
-  // 3. Генератор
+  // 4. Генератор
   if (state.generatorNeeded) {
     let trGen = document.createElement('tr');
     trGen.innerHTML = `
@@ -780,7 +829,7 @@ function updateCalculation() {
     tbody.appendChild(trGen);
   }
 
-  // 4. Пронос
+  // 5. Пронос
   if (carryCost > 0) {
     let trCar = document.createElement('tr');
     trCar.innerHTML = `
@@ -847,12 +896,13 @@ function resetCalculator(ask) {
   updateCalculation();
 }
 
-/* ГЕНЕРАЦИЯ ЗАЯВКИ СТРОГО ПО ФИКСИРОВАННОМУ ПОРЯДКУ */
-function openOrderModal() {
+/* ГЕНЕРАЦИЯ ЗАЯВОК: ДЛЯ МАСТЕРА И ДЛЯ КЛИЕНТА (БЕЗ УПОМИНАНИЯ НАЦЕНКИ) */
+function openOrderModal(mode = 'master') {
+  state.currentModalMode = mode;
   const pile = PILES_DATA.find(p => p.id === state.selectedPileId) || PILES_DATA[2];
   const qty = state.pileQty;
   const isSmall = qty <= 4;
-  const pileCostWithInstall = (pile.price * qty) + (isSmall ? 4000 : 0);
+  const pileCostCombined = (pile.price * qty) + (isSmall ? 4000 : 0);
 
   const dateVal = document.getElementById('order_date').value || '—';
   
@@ -866,7 +916,7 @@ function openOrderModal() {
   const delivCost = state.deliveryIncluded ? state.deliveryPrice : 0;
   const genCost = state.generatorNeeded ? 3000 : 0;
   const carryCost = state.carryPrice;
-  const total = pileCostWithInstall + delivCost + genCost + carryCost;
+  const total = pileCostCombined + delivCost + genCost + carryCost;
 
   let electricText = '';
   if (state.hasPower) {
@@ -882,28 +932,43 @@ function openOrderModal() {
     carryText = `\n${state.carryName}: ${carryCost.toLocaleString('ru-RU')} руб.`;
   }
 
-  // Фиксированная структура заявки строго по пунктам ТЗ:
-  // 1. заявка на установку / дата
-  // 2. размер бытовки
-  // 3. комплект свай
-  // 4. доставка бура и оборудования
-  // 5. электричество (+ пустая строка)
-  // 6. итого (+ пустая строка)
-  // 7. контакты / номер телефона
-  // 8. итого мастеру оплата наличными
-  // 9. ответственный менеджер
-
-  let text = `Заявка на установку свай: ${dateVal}\n`;
-  text += `${objectVal}\n\n`;
-  text += `${pile.name} - ${qty} шт с доставкой и установкой ${pileCostWithInstall.toLocaleString('ru-RU')} руб.\n\n`;
-  text += `Доставка бура и оборудования: ${addrVal}\n`;
-  text += `${delivCost.toLocaleString('ru-RU')} руб.\n`;
-  text += `${electricText}${carryText}\n\n`;
-  text += `Итого: ${total.toLocaleString('ru-RU')} руб.\n\n`;
-  text += `Контакты\n`;
-  text += `Номер клиента для связи: ${phoneVal}\n`;
-  text += `Всего: ${total.toLocaleString('ru-RU')} руб. оплата мастеру наличными\n`;
-  text += `Ответственный менеджер: ${managerVal}`;
+  let text = '';
+  if (mode === 'master') {
+    document.getElementById('modal_head_title').textContent = 'Готовая заявка монтажнику / мастеру';
+    text += `Заявка на установку свай: ${dateVal}\n`;
+    text += `${objectVal}\n\n`;
+    text += `${pile.name} - ${qty} шт с доставкой и установкой ${pileCostCombined.toLocaleString('ru-RU')} руб.\n\n`;
+    text += `Доставка бура и оборудования: ${addrVal}\n`;
+    text += `${delivCost.toLocaleString('ru-RU')} руб.\n`;
+    text += `${electricText}${carryText}\n\n`;
+    text += `Итого: ${total.toLocaleString('ru-RU')} руб.\n\n`;
+    text += `Контакты\n`;
+    text += `Номер клиента для связи: ${phoneVal}\n`;
+    text += `Всего: ${total.toLocaleString('ru-RU')} руб. оплата мастеру наличными\n`;
+    text += `Ответственный менеджер: ${managerVal}`;
+  } else {
+    /* ЗАЯВКА ДЛЯ КЛИЕНТА (СМЕТА БЕЗ УПОМИНАНИЯ НАЦЕНКИ ЗА МАЛЫЙ ОБЪЕМ) */
+    document.getElementById('modal_head_title').textContent = 'Заявка / Смета для клиента (без доплаты за малый объем)';
+    text += `Расчет свайного фундамента: ${dateVal}\n`;
+    text += `${objectVal}\n\n`;
+    text += `Сваи и монтаж: ${pile.name} — ${qty} шт.\n`;
+    text += `Стоимость фундамента: ${pileCostCombined.toLocaleString('ru-RU')} руб.\n\n`;
+    if (state.deliveryIncluded) {
+      text += `Доставка бура и оборудования: ${delivCost.toLocaleString('ru-RU')} руб.\n`;
+    }
+    if (state.generatorNeeded) {
+      text += `Аренда генератора: 3 000 руб.\n`;
+    }
+    if (carryCost > 0) {
+      text += `${state.carryName}: ${carryCost.toLocaleString('ru-RU')} руб.\n`;
+    }
+    text += `Адрес объекта: ${addrVal}\n\n`;
+    text += `Итого к оплате: ${total.toLocaleString('ru-RU')} руб.\n\n`;
+    text += `Условия:\n`;
+    text += `• 100% оплата мастеру наличными по факту выполненного монтажа\n`;
+    text += `• Монтаж свай производится минимум за 1 день до доставки бытовки\n\n`;
+    text += `Ваш менеджер: ${managerVal} (АтомДомСтрой)`;
+  }
 
   document.getElementById('modal_text').value = text;
   document.getElementById('order_modal').classList.add('active');
